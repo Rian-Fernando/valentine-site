@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>💘 Be My Valentine?</title>
+    <style>
+      :root {
+        --bg1: #0f0a10;
+        --bg2: #1a0b1f;
+        --card: rgba(255, 255, 255, 0.06);
+        --card2: rgba(255, 255, 255, 0.09);
+        --border: rgba(255, 255, 255, 0.14);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.72);
+        --pink: #ff4d8d;
+        --pink2: #ff2e73;
+        --green: #32d583;
+        --shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+      }
+
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        color: var(--text);
+        background: radial-gradient(
+            1200px 800px at 20% 20%,
+            rgba(255, 77, 141, 0.25),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 700px at 80% 30%,
+            rgba(128, 80, 255, 0.18),
+            transparent 55%
+          ),
+          radial-gradient(
+            900px 700px at 40% 90%,
+            rgba(50, 213, 131, 0.12),
+            transparent 55%
+          ),
+          linear-gradient(160deg, var(--bg1), var(--bg2));
+        background-attachment: fixed;
+        overflow-x: hidden;
+      }
+
+      /* floating hearts */
+      .hearts {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        opacity: 0.55;
+      }
+      .heart {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        transform: rotate(45deg);
+        background: rgba(255, 77, 141, 0.55);
+        border-radius: 4px;
+        animation: floatUp linear infinite;
+        filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.25));
+      }
+      .heart::before,
+      .heart::after {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        background: inherit;
+        border-radius: 50%;
+      }
+      .heart::before { left: -9px; top: 0; }
+      .heart::after { left: 0; top: -9px; }
+
+      @keyframes floatUp {
+        from { transform: translateY(30vh) rotate(45deg); opacity: 0; }
+        10% { opacity: 1; }
+        to { transform: translateY(-120vh) rotate(45deg); opacity: 0; }
+      }
+
+      .wrap {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 28px 16px;
+      }
+
+      .card {
+        width: min(980px, 96vw);
+        border-radius: 28px;
+        background: linear-gradient(180deg, var(--card), var(--card2));
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .topbar {
+        padding: 18px 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .badge {
+        display: none;
+      }
+
+      .badge .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 30%, #fff, var(--pink));
+        box-shadow: 0 0 18px rgba(255, 77, 141, 0.6);
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.35;
+        text-align: right;
+      }
+
+      .content {
+        padding: 22px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      @media (min-width: 900px) {
+        .content {
+          grid-template-columns: 1.2fr 0.8fr;
+          align-items: center;
+          gap: 24px;
+          padding: 26px;
+        }
+      }
+
+      /* 4-photo grid */
+      .photos {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .photo {
+        border-radius: 22px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.05);
+        position: relative;
+        aspect-ratio: 4 / 5;
+      }
+
+      .photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .label {
+        display: none;
+      }
+
+      .ask {
+        text-align: center;
+        padding: 12px 8px;
+      }
+
+      .ask h1 {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 44px);
+        letter-spacing: -0.6px;
+      }
+
+      .ask p {
+        margin: 10px auto 0;
+        max-width: 52ch;
+        color: var(--muted);
+        line-height: 1.5;
+        font-size: 15px;
+      }
+
+      .btnRow {
+        margin-top: 18px;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        position: relative;
+      }
+
+      button {
+        border: none;
+        cursor: pointer;
+        font-weight: 750;
+        letter-spacing: 0.2px;
+        padding: 12px 18px;
+        border-radius: 999px;
+        font-size: 16px;
+        transition: transform 0.15s ease, filter 0.15s ease;
+        user-select: none;
+      }
+
+      button:active { transform: scale(0.98); }
+
+      .yes {
+        background: linear-gradient(135deg, var(--green), #77f0b8);
+        color: #072413;
+        box-shadow: 0 18px 45px rgba(50, 213, 131, 0.25);
+      }
+
+      .no {
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+
+      /* no button dodge */
+      .btnRow.dodge { min-height: 90px; }
+      .btnRow.dodge .no { position: absolute; }
+
+      /* success overlay */
+      .overlay {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+        z-index: 50;
+      }
+
+      .overlay.show { opacity: 1; pointer-events: auto; }
+
+      .modal {
+        width: min(720px, 92vw);
+        border-radius: 28px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.10),
+          rgba(255, 255, 255, 0.06)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 28px 120px rgba(0, 0, 0, 0.65);
+        padding: 22px;
+        text-align: center;
+      }
+
+      .modal h2 {
+        margin: 0;
+        font-size: clamp(22px, 3.2vw, 34px);
+        letter-spacing: -0.4px;
+      }
+
+      .modal p {
+        margin: 12px auto 0;
+        max-width: 62ch;
+        color: rgba(255, 255, 255, 0.86);
+        line-height: 1.55;
+        font-size: 15px;
+      }
+
+      .modal .small {
+        margin-top: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 13px;
+      }
+
+      .close {
+        margin-top: 16px;
+        background: linear-gradient(135deg, var(--pink), var(--pink2));
+        color: #23010f;
+        box-shadow: 0 18px 45px rgba(255, 77, 141, 0.25);
+      }
+
+      /* confetti */
+      .confetti {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 60;
+      }
+
+      .piece {
+        position: absolute;
+        width: 10px;
+        height: 16px;
+        border-radius: 4px;
+        opacity: 0.95;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="hearts" aria-hidden="true" id="hearts"></div>
+
+    <main class="wrap">
+      <section class="card" role="region" aria-label="Valentine invitation">
+        <div class="topbar">
+          <div class="badge"><span class="dot"></span> Valentine Mode</div>
+          <div class="hint">Try clicking <b>No</b> 😌</div>
+        </div>
+
+        <div class="content">
+          <!-- 4 photos -->
+          <div class="photos">
+            <div class="photo">
+              <img src="you1.jpg" alt="You photo 1" />
+              <div class="label">You</div>
+            </div>
+            <div class="photo">
+              <img src="you2.jpg" alt="You photo 2" />
+              <div class="label">You</div>
+            </div>
+            <div class="photo">
+              <img src="her1.jpg" alt="Her photo 1" />
+              <div class="label">Her</div>
+            </div>
+            <div class="photo">
+              <img src="her2.jpg" alt="Her photo 2" />
+              <div class="label">Her</div>
+            </div>
+          </div>
+
+          <!-- Question -->
+          <div class="ask">
+            <h1>Will you be my valentine? 💘</h1>
+            <p>There is only one correct answer.</p>
+
+            <div class="btnRow" id="btnRow">
+              <button class="yes" id="yesBtn">Yes🙈</button>
+              <button class="no" id="noBtn">No😔</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Popup -->
+    <div class="overlay" id="overlay">
+      <div class="modal">
+        <h2>YAYYYYY🕺🥳🎉</h2>
+        <p>
+          <b>Your Dinner/Breakfast date is reserved for next Saturday the 14th of February.</b>
+          <br />
+          Please be on time or a <b>spanking</b> will be charged for each minute late 👀
+        </p>
+        <button class="close" id="closeBtn">Close</button>
+      </div>
+    </div>
+
+    <div class="confetti" id="confetti"></div>
+
+    <script>
+      // Hearts
+      const hearts = document.getElementById("hearts");
+      for (let i = 0; i < 18; i++) {
+        const h = document.createElement("div");
+        h.className = "heart";
+        const left = Math.random() * 100;
+        const size = 10 + Math.random() * 16;
+        const dur = 7 + Math.random() * 8;
+        const delay = Math.random() * 4;
+
+        h.style.left = left + "vw";
+        h.style.width = size + "px";
+        h.style.height = size + "px";
+        h.style.animationDuration = dur + "s";
+        h.style.animationDelay = delay + "s";
+        hearts.appendChild(h);
+      }
+
+      // No button dodge
+      const btnRow = document.getElementById("btnRow");
+      const noBtn = document.getElementById("noBtn");
+      const yesBtn = document.getElementById("yesBtn");
+
+      function moveNoButton() {
+        btnRow.classList.add("dodge");
+
+        const rowRect = btnRow.getBoundingClientRect();
+        const btnRect = noBtn.getBoundingClientRect();
+        const yesBtnRect = yesBtn.getBoundingClientRect();
+        const pad = 12;
+        const minDistance = 200; // Minimum distance to keep buttons apart
+
+        let x, y, attempts = 0;
+        const maxAttempts = 50;
+
+        do {
+          const maxX = rowRect.width - btnRect.width - pad;
+          const maxY = rowRect.height - btnRect.height - pad;
+
+          x = pad + Math.random() * Math.max(0, maxX - pad);
+          y = pad + Math.random() * Math.max(0, maxY - pad);
+
+          // Calculate distance from yes button center
+          const noCenterX = x + btnRect.width / 2;
+          const noCenterY = y + btnRect.height / 2;
+          const yesCenterX = yesBtnRect.left - rowRect.left + yesBtnRect.width / 2;
+          const yesCenterY = yesBtnRect.top - rowRect.top + yesBtnRect.height / 2;
+
+          const distance = Math.sqrt(
+            Math.pow(noCenterX - yesCenterX, 2) + Math.pow(noCenterY - yesCenterY, 2)
+          );
+
+          if (distance >= minDistance) break;
+          attempts++;
+        } while (attempts < maxAttempts);
+
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
+      }
+
+      noBtn.addEventListener("mouseenter", moveNoButton);
+      noBtn.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        moveNoButton();
+      });
+
+      // Celebration
+      const overlay = document.getElementById("overlay");
+      const confetti = document.getElementById("confetti");
+      const closeBtn = document.getElementById("closeBtn");
+
+      function burstConfetti() {
+        confetti.innerHTML = "";
+        const pieces = 130;
+
+        for (let i = 0; i < pieces; i++) {
+          const p = document.createElement("div");
+          p.className = "piece";
+
+          const left = Math.random() * window.innerWidth;
+          const sizeW = 6 + Math.random() * 10;
+          const sizeH = 10 + Math.random() * 18;
+          const dur = 1.8 + Math.random() * 2.6;
+          const delay = Math.random() * 0.25;
+
+          const hue = Math.floor(320 + Math.random() * 90);
+          p.style.background = `hsl(${hue} 95% 70%)`;
+
+          p.style.left = left + "px";
+          p.style.top = "-20px";
+          p.style.width = sizeW + "px";
+          p.style.height = sizeH + "px";
+
+          confetti.appendChild(p);
+
+          const drift = (Math.random() - 0.5) * 260;
+          p.animate(
+            [
+              { transform: `translate(${drift}px, -20vh) rotate(0deg)` },
+              { transform: `translate(${drift * 0.6}px, 120vh) rotate(720deg)` }
+            ],
+            {
+              duration: (dur + delay) * 1000,
+              easing: "linear",
+              fill: "forwards",
+              delay: delay * 1000
+            }
+          );
+        }
+
+        setTimeout(() => (confetti.innerHTML = ""), 4500);
+      }
+
+      function celebrate() {
+        burstConfetti();
+        overlay.classList.add("show");
+        yesBtn.disabled = true;
+        noBtn.disabled = true;
+      }
+
+      yesBtn.addEventListener("click", celebrate);
+
+      closeBtn.addEventListener("click", () => overlay.classList.remove("show"));
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) overlay.classList.remove("show");
+      });
+    </script>
+  </body>
+</html>
